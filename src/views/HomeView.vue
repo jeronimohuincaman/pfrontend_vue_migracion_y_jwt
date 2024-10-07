@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-const userStore = useAuthStore();
+const userStore = useUserStore();
 const router = useRouter();
 
 // Verificar si el usuario está logueado al montar el componente
