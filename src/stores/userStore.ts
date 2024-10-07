@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 
-export const useAuthStore = defineStore('usuario', {
+export const useUserStore = defineStore('usuario', {
     // Estado inicial del store
     state: () => ({
-        usuario: null as null | { nick: string; token: string },
+        usuario: null as null | { username: string; token: string },
         isLoggedIn: false,
     }),
 
@@ -19,10 +19,10 @@ export const useAuthStore = defineStore('usuario', {
     // Acciones para modificar el estado
     actions: {
         // Método para simular un inicio de sesión
-        login(nick: string, password: string) {
+        login(username: string, password: string) {
             // Simulación de autenticación
-            if (nick === 'admin' && password === 'admin') {
-                this.usuario = { nick, token: 'fake-jwt-token' };
+            if (username === 'admin' && password === 'admin') {
+                this.usuario = { username, token: 'fake-jwt-token' };
                 this.isLoggedIn = true;
                 return true;
             } else {

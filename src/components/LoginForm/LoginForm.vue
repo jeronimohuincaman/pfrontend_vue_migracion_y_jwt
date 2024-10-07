@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import type { IUser } from '@/models/user';
-import { useAuthStore } from '@/stores/fakeAuth';
+import type { IUser } from '@/models/UserModel';
+import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const authStore = useAuthStore();
+const userStore = useUserStore();
 
 const usuario = reactive<IUser>({
-    nick: '',
+    username: '',
     password: '',
     rememberMe: false
 });
@@ -16,16 +16,14 @@ const usuario = reactive<IUser>({
 const onSubmit = async (e: Event) => {
     e.preventDefault();
 
-    console.log(usuario)
-
     // Validación básica de los campos
-    if (!usuario.nick || !usuario.password) {
+    if (!usuario.username || !usuario.password) {
         return alert('Por favor, complete todos los campos');
     }
 
     try {
         // Llamada a una función del store para iniciar sesión
-        const isLoggedIn = await authStore.login(usuario.nick, usuario.password, usuario.rememberMe);
+        const isLoggedIn = await userStore.login(usuario.username, usuario.password, usuario.rememberMe);
 
         if (isLoggedIn) {
             // Redirigir al usuario a la página deseada después del logueo exitoso
@@ -46,7 +44,7 @@ const onSubmit = async (e: Event) => {
             <h1>Login</h1>
 
             <div class="input-bx">
-                <input v-model="usuario.nick" type="text" placeholder="Usuario" required />
+                <input v-model="usuario.username" type="text" placeholder="Usuario" required />
                 <ion-icon class="icon" name="person-circle"></ion-icon>
             </div>
 

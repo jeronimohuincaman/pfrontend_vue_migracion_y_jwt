@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/fakeAuth';
+import { useAuthStore } from '@/stores/userStore';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -17,7 +17,7 @@ onMounted(() => {
 
 <template>
   <div class="wrapper" v-if="userStore.usuario">
-    <h1>Bienvenido, {{ userStore.usuario.nick }}!</h1>
+    <h1>Bienvenido, {{ userStore.usuario.username }}!</h1>
     <p>¡Has iniciado sesión correctamente!</p>
   </div>
 </template>
