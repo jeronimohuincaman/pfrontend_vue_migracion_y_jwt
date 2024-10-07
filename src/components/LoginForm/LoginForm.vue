@@ -39,7 +39,6 @@ const onSubmit = async (e: Event) => {
     }
 };
 
-
 </script>
 <template>
     <div class="wrapper">

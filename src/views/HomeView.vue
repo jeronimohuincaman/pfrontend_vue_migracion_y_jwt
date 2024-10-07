@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/fakeAuth';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
 const userStore = useAuthStore();
+const router = useRouter();
+
+// Verificar si el usuario está logueado al montar el componente
+onMounted(() => {
+  if (!userStore.usuario) {
+    // Redirigir al login si el usuario no está logueado
+    router.push({ name: 'login' });
+  }
+});
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrapper" v-if="userStore.usuario">
     <h1>Bienvenido, {{ userStore.usuario.nick }}!</h1>
     <p>¡Has iniciado sesión correctamente!</p>
   </div>
@@ -22,7 +34,8 @@ const userStore = useAuthStore();
   border-radius: 15px;
 }
 
-.wrapper h1,p {
+.wrapper h1,
+p {
   text-align: center;
 }
 </style>
