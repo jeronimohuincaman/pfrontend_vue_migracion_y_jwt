@@ -12,8 +12,8 @@ const users: User[] = JSON.parse(localStorage.getItem(usersKey) || '[]');
 // Agregar un usuario test en localstorage si no hay ninguno
 const user: User = {
     id: 1,
-    firstname: 'Matias',
-    lastname: 'Orellana',
+    firstname: 'Jerónimo Ezequiel',
+    lastname: 'Huincamán',
     username: 'test',
     password: 'test',
     isAdmin: true,
