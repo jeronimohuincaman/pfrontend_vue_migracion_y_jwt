@@ -1,24 +1,24 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/authStore';
+import type { User } from '@/models/UserModel';
 import { useUserStore } from '@/stores/userStore';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive } from 'vue';
 
-const userStore = useUserStore();
-const router = useRouter();
 
-// Verificar si el usuario está logueado al montar el componente
-onMounted(() => {
-  if (!userStore.usuario) {
-    // Redirigir al login si el usuario no está logueado
-    router.push({ name: 'login' });
-  }
-});
+const authStore = useAuthStore();
+const usuario = authStore.auth.data
+
+function logout() {
+  authStore.logout();
+}
 </script>
 
 <template>
-  <div class="wrapper" v-if="userStore.usuario">
-    <h1>Bienvenido, {{ userStore.usuario.username }}!</h1>
+  <div class="wrapper">
+    <h1>Bienvenido, {{ usuario.firstname }}!</h1>
     <p>¡Has iniciado sesión correctamente!</p>
+
+    <button @click="logout">Logout</button>
   </div>
 </template>
 

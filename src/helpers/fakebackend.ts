@@ -60,13 +60,13 @@ function fakeBackend() {
             function authenticate() {
                 const { username, password } = body<AuthRequestBody>();
                 const user = users.find(x => x.username === username && x.password === password);
-
+                
                 if (!user) return error('Usuario o contraseña incorrectos');
-
+                
                 // Agregar refresh token al usuario
                 user.refreshTokens.push(generateRefreshToken());
                 localStorage.setItem(usersKey, JSON.stringify(users));
-
+                
                 return ok({
                     id: user.id,
                     username: user.username,

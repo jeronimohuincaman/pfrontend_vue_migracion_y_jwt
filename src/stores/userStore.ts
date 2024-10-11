@@ -21,13 +21,10 @@ export const useUserStore = defineStore('usuario', {
         // Método para simular un inicio de sesión
         login(username: string, password: string) {
             // Simulación de autenticación
-            if (username === 'admin' && password === 'admin') {
-                this.usuario = { username, token: 'fake-jwt-token' };
-                this.isLoggedIn = true;
-                return true;
-            } else {
-                return false;
-            }
+            this.usuario = { username, token: 'fake-jwt-token' };
+            this.isLoggedIn = true;
+            return true;
+
         },
 
         // Método para cerrar sesión

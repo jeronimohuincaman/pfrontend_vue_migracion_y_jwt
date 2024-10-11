@@ -1,68 +1,71 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import type { IUser } from '@/models/UserModel';
+import type { User } from '@/models/UserModel';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router';
+import { Form, Field } from 'vee-validate';
+import * as Yup from 'yup';
+import { useAuthStore } from '@/stores/authStore';
 
 const router = useRouter();
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
-const usuario = reactive<IUser>({
-    username: '',
-    password: '',
-    rememberMe: false
+const schema = Yup.object().shape({
+    username: Yup.string().required('Usuario Requerido'),
+    password: Yup.string().required('Contraseña Requerida'),
+    // rememberMe: Yup.boolean()
 });
 
-const onSubmit = async (e: Event) => {
-    e.preventDefault();
+if (authStore.auth.data) {
+    router.push({ name: 'login' })
+}
 
-    // Validación básica de los campos
-    if (!usuario.username || !usuario.password) {
-        return alert('Por favor, complete todos los campos');
-    }
+function handleSubmit(values: any, { setErrors }: any) {
+    const { username, password } = values;
 
-    try {
-        // Llamada a una función del store para iniciar sesión
-        const isLoggedIn = await userStore.login(usuario.username, usuario.password, usuario.rememberMe);
+    return authStore.login(username, password).then(() => {
+        router.push('/');
+    }).catch(error => {
+        setErrors({ apiError: error });
+    })
 
-        if (isLoggedIn) {
-            // Redirigir al usuario a la página deseada después del logueo exitoso
-            router.push({ name: 'home' });
-        } else {
-            alert('Usuario o contraseña incorrectos');
-        }
-    } catch (error) {
-        console.error('Error durante el logueo:', error);
-        alert('Hubo un problema con el logueo. Intente nuevamente.');
-    }
-};
+}
 
 </script>
 <template>
     <div class="wrapper">
-        <form @submit.prevent="onSubmit" id="loginForm">
+        <Form @submit="handleSubmit" :validation-schema="schema" v-slot="{ errors, isSubmitting }">
             <h1>Login</h1>
 
             <div class="input-bx">
-                <input v-model="usuario.username" type="text" placeholder="Usuario" required />
+                <Field name="username" type="text" :class="{ 'is-invalid': errors.username || errors.apiError }"
+                    placeholder="Usuario" required />
                 <ion-icon class="icon" name="person-circle"></ion-icon>
+                <div class="invalid-feedback">{{ errors.username }}</div>
             </div>
 
             <div class="input-bx">
-                <input v-model="usuario.password" type="password" name="password" placeholder="Contrasena" required />
+                <Field type="password" name="password" :class="{ 'is-invalid': errors.password || errors.apiError }"
+                    placeholder="Contraseña" required />
                 <ion-icon class="icon" name="lock-closed"></ion-icon>
+                <div class="invalid-feedback">{{ errors.password }}</div>
             </div>
 
             <div class="remember-forgot">
                 <label>
-                    <input v-model="usuario.rememberMe" type="checkbox" />
+                    <Field name="rememberMe" type="checkbox" />
                     <span>Recuerdame</span>
                 </label>
                 <a href="#">Olvidaste tu contrasena</a>
             </div>
 
-            <button type="submit" class="btn">Ingresar</button>
-        </form>
+            <button type="submit" class="btn">
+                <span v-show="isSubmitting" class="loader"></span>
+                <p v-show="!isSubmitting">Ingresar</p>
+            </button>
+            <div v-if="errors.apiError" class="error-alert"> {{ errors.apiError }} </div>
+        </Form>
     </div>
 </template>
 
@@ -102,8 +105,20 @@ const onSubmit = async (e: Event) => {
     padding: 20px 45px 20px 20px;
 }
 
+.wrapper .input-bx input.is-invalid {
+    width: 100%;
+    height: 100%;
+    background: rgba(250, 150, 150, .1);
+    border: 2px solid rgba(255, 0, 0, .2);
+    color: red;
+}
+
 .wrapper .input-bx input::placeholder {
     color: #fff;
+}
+
+.wrapper .input-bx input.is-invalid::placeholder {
+    color: red;
 }
 
 .wrapper .input-bx .icon {
@@ -112,6 +127,13 @@ const onSubmit = async (e: Event) => {
     top: 50%;
     transform: translateY(-50%);
     font-size: 1.5em;
+}
+
+.wrapper .input-bx .invalid-feedback {
+    padding: 0px 16px;
+    margin: 0;
+    color: red;
+    font-weight: 300;
 }
 
 .wrapper .remember-forgot {
@@ -146,5 +168,55 @@ const onSubmit = async (e: Event) => {
     font-size: 1.2em;
     font-weight: 600;
     color: #333;
+}
+
+.wrapper button {
+    width: 100%;
+    height: 50px;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.wrapper button p {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333
+}
+
+.loader {
+    margin: auto 0;
+    width: 24px;
+    height: 24px;
+    border: 4px solid purple;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotatio 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.error-alert {
+    margin: 16px 0 0 0;
+    width: 100%;
+    background: transparent;
+    color: red;
+    text-align: center;
+    font-weight: 400;
 }
 </style>
