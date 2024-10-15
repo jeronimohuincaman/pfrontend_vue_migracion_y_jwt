@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import type { User } from '@/models/UserModel';
 import { fetchWrapper } from '@/helpers/fetchwrapper';
 import router from '@/router';
+import { useSessionStore } from './sessionStore';
+import { useUserStore } from './userStore';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/users`
 
@@ -13,12 +15,25 @@ export const useAuthStore = defineStore({
     actions: {
         async login(username: string, password: string) {
             this.auth.data = await fetchWrapper.post(`${baseUrl}/authenticate`, { username, password }, { credentials: 'include' });
+
+            const sessionStore = useSessionStore();
+
+            if (this.auth.data?.jwtToken) {
+                sessionStore.update(this.auth.data?.jwtToken);
+            } else {
+                console.error('Error al renovar sesion!');
+            }
+
             this.startRefreshTokenTimer();
         },
         logout() {
+            const sessionStore = useSessionStore();
+            const userStore = useUserStore();
             fetchWrapper.post(`${baseUrl}/revoke-token`, {}, { credentials: 'include' });
             this.stopRefreshTokenTimer();
             this.auth.data = null;
+            sessionStore.clear();
+            userStore.logout();
             router.push({ name: 'login' });
         },
         async refreshToken() {

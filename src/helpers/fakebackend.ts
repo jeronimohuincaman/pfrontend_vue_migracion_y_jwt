@@ -1,30 +1,42 @@
 export { fakeBackend };
 
 import type { User } from '@/models/UserModel'
-import type { JwtPayload } from '@/models/JwtModels';
+import type { JwtPayload } from '@/models/JwtModel';
 import type { AuthRequestBody } from '@/models/AuthReqModel';
+import { useSessionStore } from '@/stores/sessionStore';
 
 
 // Array de usuarios en localstorage
-const usersKey = 'vue-3-jwt-refresh-token-users';
+const usersKey = 'session-user-data';
 const users: User[] = JSON.parse(localStorage.getItem(usersKey) || '[]');
 
 // Agregar un usuario test en localstorage si no hay ninguno
-const user: User = {
+const usuarios: User[] = [{
     id: 1,
     firstname: 'Jerónimo Ezequiel',
     lastname: 'Huincamán',
-    username: 'test',
-    password: 'test',
+    username: 'admin',
+    password: 'admin',
     isAdmin: true,
     refreshTokens: []
-}
+}, {
+    id: 2,
+    firstname: 'Usuario comun',
+    lastname: '',
+    username: 'test',
+    password: 'test',
+    isAdmin: false,
+    refreshTokens: []
+}]
+
+console.log(usuarios);
 
 // si no hay usuarios creamos uno y lo guardamos en almacenamiento local
 if (!users.length) {
-    users.push(user);
+    users.push(...usuarios);
     localStorage.setItem(usersKey, JSON.stringify(users));
 }
+
 
 function fakeBackend() {
 
@@ -60,25 +72,31 @@ function fakeBackend() {
             function authenticate() {
                 const { username, password } = body<AuthRequestBody>();
                 const user = users.find(x => x.username === username && x.password === password);
-                
+                const sessionStore = useSessionStore();
+
                 if (!user) return error('Usuario o contraseña incorrectos');
-                
+
                 // Agregar refresh token al usuario
                 user.refreshTokens.push(generateRefreshToken());
                 localStorage.setItem(usersKey, JSON.stringify(users));
-                
+
+
+                const nuevoToken = generateJwtToken();
+                sessionStore.update(nuevoToken);
+
                 return ok({
                     id: user.id,
                     username: user.username,
                     firstname: user.firstname,
                     lastname: user.lastname,
                     isAdmin: user.isAdmin,
-                    jwtToken: generateJwtToken(),
+                    jwtToken: nuevoToken,
                 });
             }
 
             function refreshToken() {
                 const refreshToken = getRefreshToken();
+                const sessionStore = useSessionStore();
                 if (!refreshToken) return unauthorized();
 
                 const user = users.find(x => x.refreshTokens.includes(refreshToken));
@@ -89,13 +107,17 @@ function fakeBackend() {
                 user.refreshTokens.push(generateRefreshToken());
                 localStorage.setItem(usersKey, JSON.stringify(users));
 
+                // Actualizo el token
+                const nuevoToken = generateJwtToken();
+                sessionStore.update(nuevoToken);
+
                 return ok({
                     id: user.id,
                     username: user.username,
                     firstname: user.firstname,
                     lastname: user.lastname,
                     isAdmin: user.isAdmin,
-                    jwtToken: generateJwtToken(),
+                    jwtToken: nuevoToken,
                 });
             }
 

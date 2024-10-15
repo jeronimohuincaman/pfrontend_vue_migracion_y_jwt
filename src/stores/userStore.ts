@@ -5,13 +5,14 @@ export const useUserStore = defineStore('usuario', {
     state: () => ({
         usuario: null as null | { username: string; token: string },
         isLoggedIn: false,
+        users: JSON.parse(localStorage.getItem('session-user-data') || '[]')
     }),
 
     // Getters para acceder a los datos derivados del estado
     getters: {
         // Ejemplo de un getter para saber si el usuario está autenticado
         getUser(state) {
-            return state.usuario;
+            return this.users;
         },
         isAuthenticated: (state) => state.isLoggedIn,
     },
@@ -31,6 +32,11 @@ export const useUserStore = defineStore('usuario', {
         logout() {
             this.usuario = null;
             this.isLoggedIn = false;
+            localStorage.removeItem('session-user-data');
         },
-    },
+
+        setUsers(users: []): void {
+            this.users = users;
+        }
+    }
 });
