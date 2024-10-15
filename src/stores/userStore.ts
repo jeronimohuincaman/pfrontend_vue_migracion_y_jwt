@@ -34,9 +34,5 @@ export const useUserStore = defineStore('usuario', {
             this.isLoggedIn = false;
             localStorage.removeItem('session-user-data');
         },
-
-        setUsers(users: []): void {
-            this.users = users;
-        }
     }
 });

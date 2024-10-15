@@ -21,7 +21,7 @@ const usuarios: User[] = [{
     refreshTokens: []
 }, {
     id: 2,
-    firstname: 'Usuario comun',
+    firstname: 'Invitado',
     lastname: '',
     username: 'test',
     password: 'test',
@@ -29,14 +29,11 @@ const usuarios: User[] = [{
     refreshTokens: []
 }]
 
-console.log(usuarios);
-
 // si no hay usuarios creamos uno y lo guardamos en almacenamiento local
 if (!users.length) {
     users.push(...usuarios);
     localStorage.setItem(usersKey, JSON.stringify(users));
 }
-
 
 function fakeBackend() {
 
