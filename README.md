@@ -1,33 +1,26 @@
-# project
+# Trabajo Practico Evalutivo #2: Autenticacion con Vue 3 Composition API (1er Sprint)
+======================================================================================
+### Descripcion del Trabajo Practico
+Este trabajo esta realizado con el Framework de Javascript `Vue.js`. El objetivo de este trabajo es implementar el uso del store con autenticacion JWT y renovacion de sesion Refresh Token.
 
-This template should help get you started developing with Vue 3 in Vite.
+![Formulario De Logueo](./public/images/login_page.png)
 
-## Recommended IDE Setup
+![Pagina Principal](./public/images/home_view.png)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Guia de instalacion
+1) Clonar Repositorio.
+2) Instalar dependencias.
+    ```sh
+        npm install
+    ```
+3) Levantar proyecto
+    ```sh
+        npm run dev
+    ```
 
-## Type Support for `.vue` Imports in TS
+## Usuarios
+- **admin**: admin
+- **test**: test
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+### Creador
+- **Jerónimo Ezequiel Huincamán** (ponele)
